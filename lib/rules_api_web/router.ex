@@ -21,9 +21,11 @@ defmodule RulesApiWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", RulesApiWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", RulesApiWeb do
+    pipe_through :api
+    post "/validate_rule", RulesController, :validate_rule
+    get "/", BaseController, :index
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:rules_api, :dev_routes) do
