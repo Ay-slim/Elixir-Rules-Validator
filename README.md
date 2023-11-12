@@ -25,6 +25,15 @@ POST `/api/validate_rule/`
 ### Successful response
 Validates that the field `missions` in the `data` key fulfills the `condition` key `gte` (greater than or equal to) in the `rules` map.
 
+Note:
+  Valid condition values include:
+    eq: Equals
+    neq: Not equal
+    gt: Greater than
+    lt: Less than
+    gte: Greater than or equal to
+    lte: Less than or equal to
+
 - Request
 JSON
 ```
