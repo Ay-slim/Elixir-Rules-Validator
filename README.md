@@ -8,8 +8,7 @@ There are two endpoints:
 
 GET `/api/`
 
-- Response
-JSON
+- Response 200 OK
 ```
 {
   "data": {
