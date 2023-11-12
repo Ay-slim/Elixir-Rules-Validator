@@ -1,8 +1,8 @@
 # Rules validation in Elixir
 This is a quick Elixir rewrite of a simple rules validation API previously [written in Javascript](https://github.com/Ay-slim/ayoflwsolution).
 There are two endpoints:
-- GET </api/> Which returns basic biodata
-- POST </api/validate_rule> which accepts a map with keys rules and data, validating the contents of the data object against the conditions specified in the rule
+- GET `/api/` Which returns basic biodata
+- POST `/api/validate_rule` which accepts a map with the keys `rule` and `data`, validating the contents of the data object against the conditions specified in the rule
 
 ## Examples
 
