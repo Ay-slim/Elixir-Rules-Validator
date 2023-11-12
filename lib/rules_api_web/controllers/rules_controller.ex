@@ -1,6 +1,23 @@
 defmodule RulesApiWeb.RulesController do
   use RulesApiWeb, :controller
 
+  defp validate_request(rule_params, data_params) do
+    required_keys = ["field", "condition", "condition_value"]
+    missing_key = Enum.find(Constants.required_rule_keys, &(!Map.has_key?(rule_params, &1)))
+    case missing_key do
+      nil ->
+        case Map.has_key?(data_params, Map.get(rule_params, "field")) do
+          true ->
+            {:ok}
+
+          _ ->
+            {:error, Map.get(rule_params, "field")}
+        end
+      _ ->
+        {:error, missing_key}
+    end
+  end
+
   def validate_rule(conn, %{"rule" => rule_params, "data" => data_params}) do
     case validate_request(rule_params, data_params) do
       {:ok} ->
@@ -11,7 +28,7 @@ defmodule RulesApiWeb.RulesController do
         
         result =
           case condition do
-            "eq"  -> data == condition_value
+            "eq"  -> data === condition_value
             "neq" -> data != condition_value
             "gt"  -> data > condition_value
             "lt"  -> data < condition_value
@@ -40,7 +57,7 @@ defmodule RulesApiWeb.RulesController do
         else
           failed_res_map = %{
             "message" => "field #{field} failed validation.",
-            "status" => "success",
+            "status" => "error",
             "data" => %{
                 "validation" => %{
                   "error" => true,
@@ -57,11 +74,9 @@ defmodule RulesApiWeb.RulesController do
         end
     
       {:error, error_message} ->
-        data_or_rule = ~w("rule data field condition condition_value")a
-        IO.puts(error_message)
-        if Enum.member?(data_or_rule, error_message) do
+        if Enum.member?(Constants.required_rule_keys, error_message) do
           data_rule_res = %{
-            "message" => "#{error_message} is required.",
+            "message" => "rule.#{error_message} is required.",
             "status" => "error",
             "data" => nil
           }
@@ -81,22 +96,25 @@ defmodule RulesApiWeb.RulesController do
     end
   end
 
-  defp validate_request(rule_params, data_params) do
-    required_keys = ~w(field condition condition_value)a
-    missing_key = Enum.find(required_keys, &(Map.has_key?(rule_params, &1)))
-    case missing_key do
-      nil ->
-        case Map.has_key?(data_params, Map.get(rule_params, "field")) do
-          true ->
-            {:ok}
-
-          _ ->
-            {:error, Map.get(rule_params, "field")}
-        end
-      _ ->
-        {:error, missing_key}
-    end
+  def validate_rule(conn, %{"rule" => rule_params}) do
+    no_data_res = %{
+      "message" => "data is required.",
+      "status" => "error",
+      "data" => nil
+    }
+    conn
+      |> put_status(400)
+      |> json(no_data_res)
   end
-  defp validate_request(%{"rule" => rule_param}), do: {:error, "data"}
-  defp validate_request(%{"data" => data_param}), do: {:error, "rule"}
+
+  def validate_rule(conn, %{"data" => data_params}) do
+    no_rule_res = %{
+      "message" => "rule is required.",
+      "status" => "error",
+      "data" => nil
+    }
+    conn
+      |> put_status(400)
+      |> json(no_rule_res)
+  end
 end
