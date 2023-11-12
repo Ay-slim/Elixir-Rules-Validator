@@ -2,11 +2,30 @@
 This is a quick Elixir rewrite of a simple rules validation API previously [written in Javascript](https://github.com/Ay-slim/ayoflwsolution).
 There are two endpoints:
 - GET `/api/` Which returns basic biodata
-- POST `/api/validate_rule` which accepts a map with the keys `rule` and `data`, validating the contents of the data object against the conditions specified in the rule
+- POST `/api/validate_rule/` which accepts a map with the keys `rule` and `data`, validating the contents of the data object against the conditions specified in the rule
 
 ## Examples
 
+GET `/api/`
+
+- Response
+JSON
+```
+{
+  "data": {
+      "email": "ayooluwaadedipe@gmail.com",
+      "github": "@Ay-slim",
+      "name": "Ayooluwa Adedipe"
+  },
+  "message": "My Rule-Validation API",
+  "status": "success"
+}
+```
+
+POST `/api/validate_rule/`
 ### Successful response
+Validates that the field `missions` in the `data` key fulfills the `condition` key `gte` (greater than or equal to) in the `rules` map.
+
 - Request
 JSON
 ```
@@ -47,6 +66,7 @@ The above is a validation that the field `missions` in the `data` key fulfills t
 ### Failed validation
 In the event that the target field value does not fulfill the set conditions:
 
+- Request
 JSON
 ```
 {
@@ -83,6 +103,8 @@ JSON
 ```
 ### Missing data value
 In the event where the field specified in the rule value is not present in the data value
+
+- Request
 JSON
 ```
 {
